@@ -18,7 +18,7 @@ public class ErrorController {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleException(Exception ex){
         log.error(ex.getMessage(),ex);
-        ApiErrorResponse error = new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(),"unexcpected error occured",null);
+        ApiErrorResponse error = new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(),"unexpected error occurred",null);
         return new ResponseEntity<>(error,HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -31,4 +31,14 @@ public class ErrorController {
         );
         return new ResponseEntity<>(error,HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ApiErrorResponse> handleIllegalStateException(IllegalArgumentException ex){
+        ApiErrorResponse error = new ApiErrorResponse(
+                HttpStatus.CONFLICT.value(),
+                ex.getMessage(),
+                null
+        );
+        return new ResponseEntity<>(error,HttpStatus.CONFLICT);
+    }
+
 }
