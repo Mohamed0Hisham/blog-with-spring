@@ -1,12 +1,14 @@
 package com.ascendant.blog.controllers;
 
 import com.ascendant.blog.domain.dtos.CategoryDto;
+import com.ascendant.blog.domain.dtos.CreateCategoryRequest;
+import com.ascendant.blog.domain.entities.Category;
 import com.ascendant.blog.mappers.CategoryMapper;
 import com.ascendant.blog.services.CategoryService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,5 +30,15 @@ public class CategoryController {
                 .map(categoryMapper::toCategoryDto)
                 .toList();
         return ResponseEntity.ok(categories);
+    }
+    @PostMapping
+    public ResponseEntity<CategoryDto> addCategory(@Valid @RequestBody CreateCategoryRequest createCategoryRequest) {
+        Category categoryToCreate = categoryMapper.toCategory(createCategoryRequest);
+
+        Category savedCategory =  categoryService.createCategory(categoryToCreate);
+        return new ResponseEntity<>(
+                categoryMapper.toCategoryDto(savedCategory),
+                HttpStatus.CREATED
+        );
     }
 }

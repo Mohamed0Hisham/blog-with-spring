@@ -2,6 +2,7 @@ package com.ascendant.blog.mappers.impl;
 
 import com.ascendant.blog.domain.PostStatus;
 import com.ascendant.blog.domain.dtos.CategoryDto;
+import com.ascendant.blog.domain.dtos.CreateCategoryRequest;
 import com.ascendant.blog.domain.entities.Category;
 import com.ascendant.blog.domain.entities.Post;
 import com.ascendant.blog.mappers.CategoryMapper;
@@ -33,6 +34,14 @@ public class CategoryMapperImpl implements CategoryMapper {
         return posts.stream()
                 .filter(post -> PostStatus.PUBLISHED.equals(post.getStatus()))
                 .count();
+    }
+
+    @Override
+    public Category toCategory(CreateCategoryRequest createCategoryRequest) {
+        if(createCategoryRequest == null) {
+            return null;
+        }
+        return new Category(createCategoryRequest.getName());
     }
 }
 
