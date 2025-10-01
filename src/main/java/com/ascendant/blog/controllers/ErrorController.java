@@ -5,40 +5,39 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestController
-@ControllerAdvice
+@RestControllerAdvice
 public class ErrorController {
-
     private static final Logger log = LoggerFactory.getLogger(ErrorController.class);
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiErrorResponse> handleException(Exception ex){
-        log.error(ex.getMessage(),ex);
-        ApiErrorResponse error = new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(),"unexpected error occurred",null);
-        return new ResponseEntity<>(error,HttpStatus.INTERNAL_SERVER_ERROR);
-    }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex){
-        ApiErrorResponse error = new ApiErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                ex.getMessage(),
-                null
-        );
+        log.warn("Bad request: {}", ex.getMessage());
+        ApiErrorResponse error = ApiErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .build();
         return new ResponseEntity<>(error,HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<ApiErrorResponse> handleIllegalStateException(IllegalArgumentException ex){
-        ApiErrorResponse error = new ApiErrorResponse(
-                HttpStatus.CONFLICT.value(),
-                ex.getMessage(),
-                null
-        );
+    public ResponseEntity<ApiErrorResponse> handleIllegalStateException(IllegalStateException ex){
+        log.warn("Conflict: {}", ex.getMessage());
+        ApiErrorResponse error = ApiErrorResponse.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .message(ex.getMessage())
+                .build();
         return new ResponseEntity<>(error,HttpStatus.CONFLICT);
+    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiErrorResponse> handleException(Exception ex){
+        log.error(ex.getMessage(),ex);
+        ApiErrorResponse error = ApiErrorResponse.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message(ex.getMessage())
+                .build();
+        return new ResponseEntity<>(error,HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

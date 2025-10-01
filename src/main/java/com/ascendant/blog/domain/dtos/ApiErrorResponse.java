@@ -3,56 +3,53 @@ package com.ascendant.blog.domain.dtos;
 import java.util.List;
 
 public class ApiErrorResponse {
-    private int status;
-    private String message;
-    private List<FieldError> fieldErrors ;
+    private final int status;
+    private final String message;
+    private final List<FieldError> fieldErrors;
 
-    public ApiErrorResponse(){}
-    public ApiErrorResponse(int status, String message, List<FieldError> fieldErrors) {
-        this.status = status;
-        this.message = message;
-        this.fieldErrors = fieldErrors;
+    private ApiErrorResponse(Builder builder) {
+        this.status = builder.status;
+        this.message = builder.message;
+        this.fieldErrors = builder.fieldErrors;
     }
+
     public int getStatus() {
         return status;
-    }
-    public void setStatus(int status) {
-        this.status = status;
     }
     public String getMessage() {
         return message;
     }
-    public void setMessage(String message) {
-        this.message = message;
-    }
     public List<FieldError> getFieldErrors() {
         return fieldErrors;
     }
-    public void setFieldErrors(List<FieldError> fieldErrors) {
-        this.fieldErrors = fieldErrors;
+
+    // --- Builder ---
+    public static Builder builder() {
+        return new Builder();
     }
 
-    public static class FieldError {
-        private String field;
+    public static class Builder {
+        private int status;
         private String message;
+        private List<FieldError> fieldErrors;
 
-        public FieldError() {}
-        public FieldError(String field, String message) {
-            this.field = field;
+        public Builder status(int status) {
+            this.status = status;
+            return this;
+        }
+        public Builder message(String message) {
             this.message = message;
+            return this;
         }
-
-        public String getField() {
-            return field;
+        public Builder fieldErrors(List<FieldError> fieldErrors) {
+            this.fieldErrors = fieldErrors;
+            return this;
         }
-        public void setField(String field) {
-            this.field = field;
-        }
-        public String getMessage() {
-            return message;
-        }
-        public void setMessage(String message) {
-            this.message = message;
+        public ApiErrorResponse build() {
+            return new ApiErrorResponse(this);
         }
     }
+
+    // --- Inner class for field errors ---
+        public record FieldError(String field, String message) {}
 }
